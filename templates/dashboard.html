@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2>Welcome, {{ username }}</h2>
+{% for s in suggestions %}<div class="tip">{{ s }}</div>{% endfor %}
+
+{% if categories %}
+<div class="card">
+  <h3>Spending by category</h3>
+  <canvas id="chart"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+  new Chart(document.getElementById('chart'), {
+    type: 'doughnut',
+    data: { labels: {{ categories|tojson }}, datasets: [{ data: {{ totals|tojson }} }] }
+  });
+</script>
+{% endif %}
+
+<div class="card">
+  <h3>Your expenses</h3>
+  {% if expenses %}
+  <table>
+    <tr><th>Title</th><th>Amount</th><th>Date</th><th>Category</th><th></th></tr>
+    {% for e in expenses %}
+    <tr>
+      <td>{{ e.title }}</td>
+      <td>{{ '%.2f'|format(e.amount) }}</td>
+      <td>{{ e.date }}</td>
+      <td>{{ e.category.name if e.category else 'Uncategorized' }}</td>
+      <td>
+        <a class="btn gray" href="{{ url_for('edit_expense', id=e.id) }}">Edit</a>
+        <form method="post" action="{{ url_for('delete_expense', id=e.id) }}"
+              onsubmit="return confirm('Delete this expense?')">
+          <button class="danger" type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p>No expenses yet. <a href="{{ url_for('add_expense') }}">Add your first one</a>.</p>
+  {% endif %}
+</div>
+{% endblock %}

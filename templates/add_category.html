@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Add Category{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>Add Category</h2>
+  <form method="post">
+    <label>Name</label><input name="name" required>
+    <label>Description</label><input name="description">
+    <button type="submit">Save</button>
+    <a class="btn gray" href="{{ url_for('list_categories') }}">Cancel</a>
+  </form>
+</div>
+{% endblock %}
